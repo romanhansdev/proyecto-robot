@@ -1,0 +1,95 @@
+PASOS PARA MONTAR EL BOT Y PROBARLO CON CORREOS REALES
+
+1. CONFIGURAR EL PROYECTO EN GOOGLE CLOUD:
+   - Ve a https://console.cloud.google.com/.
+   - Crea un nuevo proyecto o selecciona uno existente.
+   - Habilita la API de Google Calendar:
+     - Ve a "API y servicios" > "Biblioteca".
+     - Busca "Google Calendar API" y haz clic en "Habilitar".
+   - Crea credenciales de cuenta de servicio:
+     - Ve a "API y servicios" > "Credenciales".
+     - Haz clic en "Crear credenciales" > "Cuenta de servicio".
+     - Asigna un nombre a la cuenta de servicio y selecciona un rol como "Editor".
+     - Descarga el archivo JSON de la cuenta de servicio y guárdalo en tu máquina (por ejemplo, `service-account-file.json`).
+
+2. COMPARTIR EL CALENDARIO CON LA CUENTA DE SERVICIO:
+   - Ve a Google Calendar y selecciona el calendario que deseas usar.
+   - Haz clic en "Configuración y uso compartido".
+   - En la sección "Compartir con personas específicas", agrega el correo electrónico de la cuenta de servicio (se encuentra en el archivo JSON descargado).
+   - Asigna permisos de "Hacer cambios en los eventos".
+
+3. INSTALAR DEPENDENCIAS NECESARIAS:
+   - Asegúrate de tener Python instalado en tu máquina.
+   - Instala las bibliotecas necesarias ejecutando:
+     ```
+     pip install google-api-python-client google-auth pandas openpyxl
+     ```
+
+4. CONFIGURAR EL ARCHIVO DEL BOT:
+   - Coloca el archivo `contadorDehoratiket.py` en tu máquina.
+   - Actualiza las siguientes variables en el archivo:
+     - `SERVICE_ACCOUNT_FILE`: Ruta al archivo JSON de la cuenta de servicio.
+     - `CALENDAR_ID`: ID del calendario compartido (puedes encontrarlo en la configuración del calendario en Google Calendar).
+     - `EXCEL_FILE`: Nombre del archivo Excel que se generará (por defecto, `reporte_tickets.xlsx`).
+
+5. EJECUTAR EL BOT:
+   - Abre una terminal o línea de comandos.
+   - Navega al directorio donde se encuentra el archivo `contadorDehoratiket.py`.
+   - Ejecuta el script con:
+     ```
+     python contadorDehoratiket.py
+     ```
+   - El bot obtendrá los eventos del calendario, procesará los datos y generará un archivo Excel con la información.
+
+6. VERIFICAR EL ARCHIVO EXCEL:
+   - Una vez que el script se ejecute correctamente, encontrarás el archivo `reporte_tickets.xlsx` en el mismo directorio.
+   - Ábrelo con Excel o cualquier visor de hojas de cálculo para verificar los datos.
+
+7. PROBAR CON CORREOS REALES:
+   - Asegúrate de que los eventos en el calendario incluyan participantes con correos reales que contengan el dominio `@kbeli.cl`.
+   - El bot filtrará automáticamente los participantes con este dominio y los incluirá en el archivo Excel.
+
+8. AUTOMATIZAR LA EJECUCIÓN (OPCIONAL):
+   - Si deseas que el bot se ejecute automáticamente, puedes programarlo con un cron job (en Linux/macOS) o el Programador de Tareas (en Windows).
+
+NOTA:
+- Asegúrate de que los eventos en el calendario sigan el formato esperado, especialmente si incluyen el número de ticket en el título (por ejemplo, "TICKET-1234").
+- Si necesitas realizar pruebas con datos ficticios, puedes crear eventos en el calendario compartido y verificar que el bot los procese correctamente.
+
+TAREAS QUE REALIZA EL BOT:
+
+1. **Obtiene eventos del calendario de Google**:
+   - Se conecta al calendario compartido utilizando la API de Google Calendar.
+   - Filtra los eventos programados a partir de la fecha y hora actual.
+
+2. **Procesa los eventos**:
+   - Extrae información relevante de cada evento, como:
+     - Fecha de inicio.
+     - Duración en horas.
+     - Participantes con correos que contengan el dominio `@kbeli.cl`.
+     - Número de ticket (si está incluido en el título del evento).
+     - Título del evento.
+   - Calcula el total de horas ocupadas en todas las actividades.
+
+3. **Genera un archivo Excel**:
+   - Crea un archivo Excel (`reporte_tickets.xlsx`) con las siguientes columnas:
+     - Fecha.
+     - Número de Ticket.
+     - Duración (horas).
+     - Participantes.
+     - Título.
+   - Agrega una fila adicional al final con el total de horas ocupadas.
+
+4. **Filtra participantes relevantes**:
+   - Solo incluye en el reporte a los participantes cuyos correos contengan el dominio `@kbeli.cl`.
+
+5. **Muestra mensajes de estado**:
+   - Informa si no se encuentran eventos en el calendario.
+   - Notifica si el archivo Excel se genera correctamente o si ocurre algún error.
+
+6. **Permite automatización**:
+   - Puede ser programado para ejecutarse automáticamente mediante cron jobs (Linux/macOS) o el Programador de Tareas (Windows).
+
+NOTA:
+- Este bot está diseñado para facilitar el seguimiento de actividades y la gestión de tiempo en base a eventos registrados en un calendario compartido.
+
