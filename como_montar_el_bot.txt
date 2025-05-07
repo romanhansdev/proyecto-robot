@@ -43,11 +43,13 @@ PASOS PARA MONTAR EL BOT Y PROBARLO CON CORREOS REALES
 
 6. VERIFICAR EL ARCHIVO EXCEL:
    - Una vez que el script se ejecute correctamente, encontrarás el archivo `reporte_tickets.xlsx` en el mismo directorio.
-   - Ábrelo con Excel o cualquier visor de hojas de cálculo para verificar los datos.
+   - El archivo incluirá formato adicional:
+     - Los encabezados estarán en negrita.
+     - Las columnas tendrán un ancho ajustado automáticamente para mejorar la legibilidad.
 
-7. PROBAR CON CORREOS REALES:
-   - Asegúrate de que los eventos en el calendario incluyan participantes con correos reales que contengan el dominio `@kbeli.cl`.
-   - El bot filtrará automáticamente los participantes con este dominio y los incluirá en el archivo Excel.
+7. PERSONALIZAR EL FORMATO DEL EXCEL (OPCIONAL):
+   - Si deseas modificar el formato del archivo Excel, puedes editar la función `generar_excel` en el archivo `contadorDehoratiket.py`.
+   - Por ejemplo, puedes cambiar el estilo de las celdas, colores o agregar más hojas al archivo.
 
 8. AUTOMATIZAR LA EJECUCIÓN (OPCIONAL):
    - Si deseas que el bot se ejecute automáticamente, puedes programarlo con un cron job (en Linux/macOS) o el Programador de Tareas (en Windows).

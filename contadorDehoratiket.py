@@ -2,6 +2,8 @@ from googleapiclient.discovery import build
 from google.oauth2 import service_account
 import pandas as pd
 from datetime import datetime
+from openpyxl import load_workbook
+from openpyxl.styles import Font
 
 # --- CONFIGURACIÓN ---
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
@@ -81,14 +83,37 @@ def procesar_eventos(events):
     return datos
 
 def generar_excel(datos):
-    """Genera un archivo Excel con los datos procesados."""
+    """Genera un archivo Excel con los datos procesados y aplica formato."""
     # Crear un DataFrame con las columnas necesarias
     columnas = ['Fecha', 'Número de Ticket', 'Duración (horas)', 'Participantes', 'Título']
     df = pd.DataFrame(datos, columns=columnas)
     
-    # Guardar el DataFrame en un archivo Excel
-    df.to_excel(EXCEL_FILE, index=False, sheet_name="Reporte de Tickets")
-    print(f"✅ Archivo Excel generado: {EXCEL_FILE}")
+    # Guardar el DataFrame en un archivo Excel usando openpyxl
+    df.to_excel(EXCEL_FILE, index=False, sheet_name="Reporte de Tickets", engine='openpyxl')
+    
+    # Cargar el archivo Excel para aplicar formato
+    wb = load_workbook(EXCEL_FILE)
+    ws = wb["Reporte de Tickets"]
+
+    # Aplicar formato a los encabezados
+    for cell in ws[1]:
+        cell.font = Font(bold=True)
+
+    # Ajustar el ancho de las columnas automáticamente
+    for column in ws.columns:
+        max_length = 0
+        column_letter = column[0].column_letter  # Obtener la letra de la columna
+        for cell in column:
+            try:
+                if cell.value:
+                    max_length = max(max_length, len(str(cell.value)))
+            except:
+                pass
+        ws.column_dimensions[column_letter].width = max_length + 2  # Ajustar ancho
+
+    # Guardar los cambios en el archivo Excel
+    wb.save(EXCEL_FILE)
+    print(f"✅ Archivo Excel generado con formato: {EXCEL_FILE}")
 
 # --- EJECUCIÓN DEL BOT ---
 
@@ -100,5 +125,7 @@ if __name__ == "__main__":
         else:
             datos_procesados = procesar_eventos(eventos)
             generar_excel(datos_procesados)
+    except FileNotFoundError as fnf_error:
+        print(f"❌ Archivo no encontrado: {fnf_error}")
     except Exception as e:
         print(f"❌ Error al ejecutar el bot: {e}")
